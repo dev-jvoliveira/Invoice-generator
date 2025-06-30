@@ -1,2 +1,2 @@
 # Invoice-generator
-Gerador de invoice BI IMPORT
+Gerador de invoice BID IMPORT
