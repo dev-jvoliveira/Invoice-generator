@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Commercial Invoice</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      font-size: 12px;
+      background: #fff;
+      margin: 0;
+    }
+
+    #invoiceContent {
+      width: 794px;
+      min-height: 1123px;
+      padding: 20px;
+      margin: auto;
+      background: white;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      position: relative;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 18px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      table-layout: fixed;
+    }
+
+    th, td {
+      border: 1px solid black;
+      padding: 5px;
+      text-align: left;
+      word-wrap: break-word;
+    }
+
+    th:nth-child(1), td:nth-child(1) { width: 5%; }
+    th:nth-child(2), td:nth-child(2) { width: 30%; }
+    th:nth-child(3), td:nth-child(3) { width: 15%; }
+    th:nth-child(4), td:nth-child(4) { width: 15%; }
+    th:nth-child(5), td:nth-child(5) { width: 10%; }
+    th:nth-child(6), td:nth-child(6) { width: 10%; }
+    th:nth-child(7), td:nth-child(7) { width: 15%; }
+
+    .section { margin-top: 20px; }
+    .flex { display: flex; justify-content: space-between; flex-wrap: wrap; }
+
+    .signature {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .input-area, .add-item-group {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: flex;
+      flex-direction: column;
+      font-weight: bold;
+    }
+
+    input, textarea {
+      padding: 4px;
+      font-size: 12px;
+    }
+
+    .add-button, .remove-button {
+      padding: 6px 10px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .export-button {
+      margin: 20px auto;
+      display: block;
+      padding: 8px 12px;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 10px;
+      grid-column: span 2;
+    }
+
+    .footer-fixed {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      right: 20px;
+    }
+
+    h5 {
+      margin: 2px 0;
+      font-weight: normal;
+    }
+
+  </style>
+</head>
+<body>
+  <img src="images/BID_IMPORT_logo_enhanced.png" alt="BID IMPORT Logo" style="display:block; margin: 20px auto; max-width: 150px;">
+  <h1>Commercial Invoice</h1>
+
+  <div class="input-area">
+    <label>Date:<input id="inputData" type="date"></label>
+    <label>Invoice Number:<input id="inputNumeroFatura" readonly></label>
+    <label>Sender:<textarea id="inputRemetente" rows="2"></textarea></label>
+    <label>Recipient:<textarea id="inputDestinatario" rows="2"></textarea></label>
+    <label>Shipment Ref.:<input id="inputRefEnvio"></label>
+    <label>Recipient Ref.:<input id="inputRefDestinatario"></label>
+    <label>Remarks:<textarea id="inputObservacoes" rows="2"></textarea></label>
+  </div>
+
+  <p><strong>Add Item</strong></p>
+  <div class="add-item-group">
+    <label>Description:<input id="desc"></label>
+    <label>Net Weight:<input id="code"></label>
+    <label>Gross Weight:<input id="weight"></label>
+    <label>Quantity:<input id="qty"></label>
+    <label>Unit Price:<input id="unit"></label>
+    <label>Total:<input id="total" readonly></label>
+    <div class="action-buttons">
+      <button class="add-button" onclick="addItem()">Add Item</button>
+      <button class="remove-button" onclick="removeLastItem()">Remove Last Item</button>
+    </div>
+  </div>
+
+  <div class="input-area">
+    <label>Currency:<input id="inputMoeda"></label>
+    <label>Transaction Terms (Incoterms):<input id="inputIncoterms"></label>
+    <label>Reason for Export:<input id="inputRazaoExportacao"></label>
+    <label>Export Type:<input id="inputTipoExportacao"></label>
+    <label>Carrier:<input id="inputTransportador"></label>
+  </div>
+
+  <button class="export-button" onclick="exportPDF()">Export to PDF</button>
+
+  <div id="invoiceContent">
+    <div style="text-align: center; margin-bottom: 20px;">
+      <img src="images/BID_IMPORT_logo_enhanced.png" alt="BID IMPORT Logo" style="max-width: 150px;">
+      <h1>Commercial Invoice</h1>
+    </div>
+
+    <div class="flex">
+      <div>
+        <strong>Date:</strong> <span id="data"></span><br>
+        <strong>Invoice:</strong> <span id="numeroFatura"></span>
+      </div>
+    </div>
+
+    <div class="section flex">
+      <div>
+        <strong>Sent From:</strong><br>
+        <span id="remetente"></span>
+      </div>
+      <div>
+        <strong>Sent To:</strong><br>
+        <span id="destinatario"></span>
+      </div>
+    </div>
+
+    <div class="section">
+      <strong>Shipment Ref.:</strong> <span id="refEnvio"></span><br>
+      <strong>Recipient Ref.:</strong> <span id="refDestinatario"></span><br>
+      <strong>Remarks:</strong> <span id="observacoes"></span>
+    </div>
+
+    <table id="tabelaItens">
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th>Description</th>
+          <th>Net Weight</th>
+          <th>Gross Weight</th>
+          <th>QTY</th>
+          <th>Unit Price</th>
+          <th>Subtotal</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <div class="section">
+      <h5><strong>Total Value:</strong> <span id="valorBens"></span></h5>
+      <h5><strong>Total Invoice Value:</strong> <span id="valorFatura"></span></h5>
+      <h5><strong>Currency:</strong> <span id="moeda"></span></h5>
+      <h5><strong>Payment Conditions:</strong></h5>
+      <h5><strong>Transaction Terms (Incoterms):</strong> <span id="incoterms"></span></h5>
+      <h5><strong>Place of Incoterm:</strong></h5>
+      <h5><strong>Reason for Export:</strong> <span id="razaoExportacao"></span></h5>
+      <h5><strong>Export Type:</strong> <span id="tipoExportacao"></span></h5>
+      <h5><strong>Total Net Weight:</strong> <span id="pesoLiquidoTotal"></span></h5>
+      <h5><strong>Total Gross Weight:</strong> <span id="pesoBrutoTotal"></span></h5>
+      <h5><strong>Total Items:</strong> <span id="totalItens"></span></h5>
+      <h5><strong>Number of Pallets:</strong> 1</h5>
+      <h5><strong>Total Packages:</strong> 1</h5>
+      <h5><strong>GST/VAT Paid By:</strong> Recipient</h5>
+      <h5><strong>Tax/Duty Payment Account:</strong> Customer Account</h5>
+      <h5><strong>Requires Customs Declaration:</strong> No</h5>
+      <h5><strong>Duty/Tax Billing Service:</strong> No</h5>
+      <h5><strong>Carrier:</strong> <span id="transportador"></span></h5>
+      <h5><strong>Final Consignee:</strong> <span id="destinatarioFinal"></span></h5>
+      <h5><strong>Exemption Statement:</strong></h5>
+    </div>
+
+    <div class="section">
+      <em>This is to confirm that the information on this invoice is true and correct and that the contents of this shipment are as stated above.</em>
+    </div>
+
+    <div class="footer-fixed">
+      <div class="signature">
+        <div>
+          <p><strong>Name:</strong> __________________</p>
+          <p><strong>Position:</strong></p>
+        </div>
+        <div>
+          <p><strong>Signature:</strong> __________________</p>
+          <p><strong>Company Stamp</strong></p>
+        </div>
+      </div>
+      <p style="text-align:right;">Page 1 of 1</p>
+    </div>
+  </div>
+
+      <script>
+    // Atualizar campos dinâmicos
+    const camposAdicionais = [
+      { input: "inputMoeda", span: "moeda" },
+      { input: "inputIncoterms", span: "incoterms" },
+      { input: "inputRazaoExportacao", span: "razaoExportacao" },
+      { input: "inputTipoExportacao", span: "tipoExportacao" },
+      { input: "inputTransportador", span: "transportador" },
+    ];
+
+    camposAdicionais.forEach(({ input, span }) => {
+      document.getElementById(input).addEventListener("input", () => {
+        document.getElementById(span).textContent = document.getElementById(input).value;
+      });
+    });
+  </script>
+
+  <script>
+    const tbody = document.querySelector('#tabelaItens tbody');
+    let itemCount = 0;
+
+    function addItem() {
+      itemCount++;
+
+      const subtotalValue = parseFloat(document.getElementById("total").value) || 0;
+      const subtotalFormatted = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD'
+      }).format(subtotalValue);
+
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${itemCount}</td>
+        <td>${desc.value}</td>
+        <td>${code.value}</td>
+        <td>${weight.value}</td>
+        <td>${qty.value}</td>
+        <td>${unit.value}</td>
+        <td>${subtotalFormatted}</td>
+      `;
+      tbody.appendChild(tr);
+      atualizarTotais();
+    }
+
+    function removeLastItem() {
+      if (tbody.lastChild) {
+        tbody.removeChild(tbody.lastChild);
+        itemCount--;
+        atualizarTotais();
+      }
+    }
+
+    function atualizarTotais() {
+      let pesoLiquidoTotal = 0;
+      let pesoBrutoTotal = 0;
+      let valorTotalFatura = 0;
+
+      [...tbody.children].forEach(tr => {
+        pesoLiquidoTotal += parseFloat(tr.children[2].textContent) || 0;
+        pesoBrutoTotal += parseFloat(tr.children[3].textContent) || 0;
+        const subtotal = tr.children[6].textContent.replace(/[^0-9.-]+/g, '');
+        valorTotalFatura += parseFloat(subtotal) || 0;
+      });
+
+      document.getElementById("pesoLiquidoTotal").textContent = pesoLiquidoTotal.toFixed(2) + " kg";
+      document.getElementById("pesoBrutoTotal").textContent = pesoBrutoTotal.toFixed(2) + " kg";
+      document.getElementById("valorBens").textContent = valorTotalFatura.toLocaleString("en-US", { style: "currency", currency: "USD" });
+      document.getElementById("valorFatura").textContent = document.getElementById("valorBens").textContent;
+      document.getElementById("totalItens").textContent = itemCount;
+      document.getElementById("destinatarioFinal").innerHTML = document.getElementById("destinatario").innerHTML;
+    }
+
+    const inputIds = [
+      "inputData", "inputNumeroFatura", "inputRemetente",
+      "inputDestinatario", "inputRefEnvio", "inputRefDestinatario", "inputObservacoes"
+    ];
+    const spanIds = [
+      "data", "numeroFatura", "remetente",
+      "destinatario", "refEnvio", "refDestinatario", "observacoes"
+    ];
+
+    inputIds.forEach((id, i) => {
+      document.getElementById(id).addEventListener("input", () => {
+        document.getElementById(spanIds[i]).innerHTML =
+          document.getElementById(id).value.replace(/\n/g, '<br>');
+      });
+    });
+
+    window.addEventListener("DOMContentLoaded", () => {
+      const today = new Date().toISOString().split("T")[0];
+      document.getElementById("inputData").value = today;
+      document.getElementById("data").textContent = today;
+
+      const now = new Date();
+      const invoiceNumber = `INV-${now.getFullYear()}${(now.getMonth()+1).toString().padStart(2,'0')}${now.getDate().toString().padStart(2,'0')}-${now.getHours().toString().padStart(2,'0')}${now.getMinutes().toString().padStart(2,'0')}${now.getSeconds().toString().padStart(2,'0')}`;
+      document.getElementById("inputNumeroFatura").value = invoiceNumber;
+      document.getElementById("numeroFatura").textContent = invoiceNumber;
+
+      const remetentePadrao = `BID IMPORT COMERCIAL ATACADISTA LTDA\nAv. Cristovão Colombo, Nº 2.620 - Sala 01\nVila industrial - Piracicaba/SP CEP: 13412-227\nCNPJ: 13.131.844/0001-13 - IE: 535.253.043.110\nTel: +55 19 99157-8587`;
+
+      const inputRemetente = document.getElementById("inputRemetente");
+      inputRemetente.value = remetentePadrao;
+      document.getElementById("remetente").innerHTML = remetentePadrao.replace(/\n/g, "<br>");
+    });
+
+    ["qty", "unit"].forEach(id => {
+      document.getElementById(id).addEventListener("input", () => {
+        const qty = parseFloat(document.getElementById("qty").value) || 0;
+        const unit = parseFloat(document.getElementById("unit").value) || 0;
+        const totalCalc = qty * unit;
+        document.getElementById("total").value = totalCalc.toFixed(2);
+      });
+    });
+
+    async function exportPDF() {
+      const { jsPDF } = window.jspdf;
+      const content = document.getElementById("invoiceContent");
+      const canvas = await html2canvas(content, { scale: 2, useCORS: true });
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF("p", "mm", "a4");
+      const imgWidth = 210;
+      const imgHeight = canvas.height * imgWidth / canvas.width;
+      pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
+      pdf.save("commercial_invoice.pdf");
+    }
+  </script>
+
+
+
+</body>
+</html>
