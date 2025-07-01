@@ -114,8 +114,19 @@
   </style>
 </head>
 <body>
-  <img src="images/BID_IMPORT_logo_enhanced.png" alt="BID IMPORT Logo" style="display:block; margin: 20px auto; max-width: 150px;">
-  <h1>Commercial Invoice</h1>
+
+
+  <label style="display: block; text-align: center; margin-bottom: 10px;">
+    Company:
+    <select id="companySelect" onchange="atualizarLogo()" style="margin-left: 10px; font-size: 12px;">
+      <option value="bid">BID IMPORT</option>
+      <option value="easy">EASYSHOP</option>
+    </select>
+  </label>
+
+  <img id="companyLogo" src="images/BID_IMPORT_logo_enhanced.png" alt="Company Logo" style="display:block; margin: 20px auto; max-width: 150px;">
+
+  
 
   <div class="input-area">
     <label>Date:<input id="inputData" type="date"></label>
@@ -153,7 +164,7 @@
 
   <div id="invoiceContent">
     <div style="text-align: center; margin-bottom: 20px;">
-      <img src="images/BID_IMPORT_logo_enhanced.png" alt="BID IMPORT Logo" style="max-width: 150px;">
+      <img id="companyLogoPdf" src="images/BID_IMPORT_logo_enhanced.png" alt="Company Logo" style="max-width: 150px;">
       <h1>Commercial Invoice</h1>
     </div>
 
@@ -363,6 +374,18 @@
       pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
       pdf.save("commercial_invoice.pdf");
     }
+
+    function atualizarLogo() {
+      const selected = document.getElementById("companySelect").value;
+      const logoPaths = {
+        bid: "images/BID_IMPORT_logo_enhanced.png",
+        easy: "images/easy.png"
+      };
+      const logo = logoPaths[selected] || logoPaths.bid;
+      document.getElementById("companyLogo").src = logo;
+      document.getElementById("companyLogoPdf").src = logo;
+    }
+
   </script>
 
 
