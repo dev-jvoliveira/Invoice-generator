@@ -110,30 +110,23 @@
       margin: 2px 0;
       font-weight: normal;
     }
-
   </style>
 </head>
 <body>
 
-
-<div style="display: flex; justify-content: center; align-items: center; margin-bottom: 10px; gap: 10px;">
-  <label style="font-weight: bold;">
+  <!-- Campo de seleção da empresa -->
+  <label style="display: block; text-align: center; margin-bottom: 10px;">
     Company:
     <select id="companySelect" onchange="atualizarLogo()" style="margin-left: 10px; font-size: 12px;">
       <option value="bid">BID IMPORT</option>
       <option value="easy">EASYSHOP</option>
+      <option value="nr">NRSHOP</option>
     </select>
   </label>
 
-  <button onclick="window.location.href='page2.html'" style="padding: 4px 10px; font-size: 12px; cursor: pointer;">
-    BANK
-  </button>
-</div>
-
   <img id="companyLogo" src="images/BID_IMPORT_logo_enhanced.png" alt="Company Logo" style="display:block; margin: 20px auto; max-width: 150px;">
 
-  
-
+  <!-- Área de preenchimento -->
   <div class="input-area">
     <label>Date:<input id="inputData" type="date"></label>
     <label>Invoice Number:<input id="inputNumeroFatura" readonly></label>
@@ -145,7 +138,6 @@
   </div>
 
   <p><strong>Add Item</strong></p>
-  
   <div class="add-item-group">
     <label>Description:<input id="desc"></label>
     <label>Net Weight (kg):<input id="code"></label>
@@ -169,11 +161,38 @@
 
   <button class="export-button" onclick="exportPDF()">Export to PDF</button>
 
+  <!-- INVOICE A4 INTEIRA COM LOGO, TABELA E INSTRUÇÕES BANCÁRIAS -->
   <div id="invoiceContent">
+
     <div style="text-align: center; margin-bottom: 20px;">
       <img id="companyLogoPdf" src="images/BID_IMPORT_logo_enhanced.png" alt="Company Logo" style="max-width: 150px;">
       <h1>Commercial Invoice</h1>
     </div>
+
+    <!-- Bloco de instruções bancárias no topo -->
+    <div style="border: 1px solid #800000; padding: 10px; margin-bottom: 20px; font-size: 11px;">
+      <h3 style="text-align: center; background-color: #800000; color: white; margin: 0 0 10px 0; padding: 4px; font-size: 12px;">
+        BANK REFERENCES / WIRE INSTRUCTIONS - USD CITI
+      </h3>
+      <div style="display: flex; flex-wrap: wrap; justify-content: space-between; line-height: 1.6;">
+        <div style="flex: 1 1 48%; padding-right: 10px; box-sizing: border-box;">
+          <strong>Beneficiary Name:</strong> NR SHOP COMERCIAL LTDA<br>
+          <strong>Beneficiary Address:</strong> RUA EDUARDO FERNANDES FILHO<br>
+          <strong>IBAN:</strong> BR046214417500001009000072C1<br>
+          <strong>Bank Name:</strong> BANCO PINE<br>
+          <strong>SWIFT CODE:</strong> PBBRBRSPXXX<br>
+        </div>
+        <div style="flex: 1 1 48%; padding-left: 10px; box-sizing: border-box;">
+          <strong>Bank Address:</strong> AV. Pres. Juscelino Kubitscheck, 1830 – 6º Andar<br>
+          <strong>Account Number:</strong> 36887811<br>
+          <strong>Intermediary Bank (if any):</strong> Citibank N.A.<br>
+          <strong>SWIFT CODE:</strong> CITIUS33<br>
+          <strong>ABA/ SWIFT Number:</strong> 021000089
+        </div>
+      </div>
+    </div>
+
+
 
     <div class="flex">
       <div>
@@ -386,7 +405,8 @@
       const selected = document.getElementById("companySelect").value;
       const logoPaths = {
         bid: "images/BID_IMPORT_logo_enhanced.png",
-        easy: "images/easy.png"
+        easy: "images/easy.png",
+        nr: "images/nr.jpg"
       };
       const logo = logoPaths[selected] || logoPaths.bid;
       document.getElementById("companyLogo").src = logo;
