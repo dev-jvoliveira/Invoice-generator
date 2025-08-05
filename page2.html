@@ -100,10 +100,9 @@
     }
 
     .footer-fixed {
-      position: absolute;
-      bottom: 20px;
-      left: 20px;
-      right: 20px;
+        padding-top: 10px;
+        border-top: 1px solid #ccc;
+        margin-top: 40px;
     }
 
     h5 {
@@ -233,28 +232,60 @@
       <tbody></tbody>
     </table>
 
-    <div class="section">
-      <h5><strong>Total Value:</strong> <span id="valorBens"></span></h5>
-      <h5><strong>Total Invoice Value:</strong> <span id="valorFatura"></span></h5>
-      <h5><strong>Currency:</strong> <span id="moeda"></span></h5>
-      <h5><strong>Payment Conditions:</strong></h5>
-      <h5><strong>Transaction Terms (Incoterms):</strong> <span id="incoterms"></span></h5>
-      <h5><strong>Place of Incoterm:</strong></h5>
-      <h5><strong>Reason for Export:</strong> <span id="razaoExportacao"></span></h5>
-      <h5><strong>Export Type:</strong> <span id="tipoExportacao"></span></h5>
-      <h5><strong>Total Net Weight:</strong> <span id="pesoLiquidoTotal"></span></h5>
-      <h5><strong>Total Gross Weight:</strong> <span id="pesoBrutoTotal"></span></h5>
-      <h5><strong>Total Items:</strong> <span id="totalItens"></span></h5>
-      <h5><strong>Number of Pallets:</strong> 1</h5>
-      <h5><strong>Total Packages:</strong> 1</h5>
-      <h5><strong>GST/VAT Paid By:</strong> Recipient</h5>
-      <h5><strong>Tax/Duty Payment Account:</strong> Customer Account</h5>
-      <h5><strong>Requires Customs Declaration:</strong> No</h5>
-      <h5><strong>Duty/Tax Billing Service:</strong> No</h5>
-      <h5><strong>Carrier:</strong> <span id="transportador"></span></h5>
-      <h5><strong>Final Consignee:</strong> <span id="destinatarioFinal"></span></h5>
-      <h5><strong>Exemption Statement:</strong></h5>
+    <div class="section" style="max-width: 300px; margin-left: auto; font-size: 12px;">
+      <div style="display: flex; justify-content: space-between;">
+        <strong>SUB TOTAL:</strong>
+        <span id="subtotalFinal">$0.00</span>
+      </div>
+      <div style="display: flex; justify-content: space-between; margin-top: 5px;">
+        <strong>Shipping:</strong>
+        <input id="shippingValue" type="number" style="width: 100px; text-align: right;" value="0.00">
+      </div>
+      <div style="display: flex; justify-content: space-between; margin-top: 5px;">
+        <strong>Other Costs (Handling):</strong>
+        <input id="otherCostsValue" type="number" style="width: 100px; text-align: right;" value="0.00">
+      </div>
+      <div style="display: flex; justify-content: space-between; margin-top: 8px; border-top: 1px solid #ccc; padding-top: 5px;">
+        <strong>GRAND TOTAL:</strong>
+        <span id="grandTotal">$0.00</span>
+      </div>
     </div>
+
+    <div class="section" style="display: flex; flex-wrap: wrap; gap: 10px; font-size: 11px;">
+
+      <div style="flex: 1 1 45%;"><strong>Total Value:</strong> <span id="valorBens">$0.00</span></div>
+      <div style="flex: 1 1 45%;"><strong>Total Invoice Value:</strong> <span id="valorFatura">$0.00</span></div>
+
+      <div style="flex: 1 1 45%;"><strong>Currency:</strong> <span id="moeda"></span></div>
+      <div style="flex: 1 1 45%;"><strong>Payment Conditions:</strong></div>
+
+      <div style="flex: 1 1 45%;"><strong>Transaction Terms (Incoterms):</strong> <span id="incoterms"></span></div>
+      <div style="flex: 1 1 45%;"><strong>Place of Incoterm:</strong></div>
+
+      <div style="flex: 1 1 45%;"><strong>Reason for Export:</strong> <span id="razaoExportacao"></span></div>
+      <div style="flex: 1 1 45%;"><strong>Export Type:</strong> <span id="tipoExportacao"></span></div>
+
+      <div style="flex: 1 1 45%;"><strong>Total Net Weight:</strong> <span id="pesoLiquidoTotal">0.00 kg</span></div>
+      <div style="flex: 1 1 45%;"><strong>Total Gross Weight:</strong> <span id="pesoBrutoTotal">0.00 kg</span></div>
+
+      <div style="flex: 1 1 45%;"><strong>Total Items:</strong> <span id="totalItens">0</span></div>
+      <div style="flex: 1 1 45%;"><strong>Number of Pallets:</strong> 1</div>
+
+      <div style="flex: 1 1 45%;"><strong>Total Packages:</strong> 1</div>
+      <div style="flex: 1 1 45%;"><strong>GST/VAT Paid By:</strong> Recipient</div>
+
+      <div style="flex: 1 1 45%;"><strong>Tax/Duty Payment Account:</strong> Customer Account</div>
+      <div style="flex: 1 1 45%;"><strong>Requires Customs Declaration:</strong> No</div>
+
+      <div style="flex: 1 1 45%;"><strong>Duty/Tax Billing Service:</strong> No</div>
+      <div style="flex: 1 1 45%;"><strong>Carrier:</strong> <span id="transportador"></span></div>
+
+      <div style="flex: 1 1 100%;"><strong>Final Consignee:</strong> <span id="destinatarioFinal"></span></div>
+      <div style="flex: 1 1 100%;"><strong>Exemption Statement:</strong></div>
+
+    </div>
+
+
 
     <div class="section">
       <em>This is to confirm that the information on this invoice is true and correct and that the contents of this shipment are as stated above.</em>
@@ -345,6 +376,23 @@
       document.getElementById("valorFatura").textContent = document.getElementById("valorBens").textContent;
       document.getElementById("totalItens").textContent = itemCount;
       document.getElementById("destinatarioFinal").innerHTML = document.getElementById("destinatario").innerHTML;
+      document.getElementById("subtotalFinal").textContent = valorTotalFatura.toLocaleString("en-US", {
+      style: "currency",
+      currency: "USD"
+    });
+
+    // Lê os valores de Shipping e Other Costs digitados
+    const shipping = parseFloat(document.getElementById("shippingValue").value) || 0;
+    const other = parseFloat(document.getElementById("otherCostsValue").value) || 0;
+
+    // Soma tudo para calcular o valor total final
+    const grandTotal = valorTotalFatura + shipping + other;
+
+    // Atualiza o campo GRAND TOTAL
+    document.getElementById("grandTotal").textContent = grandTotal.toLocaleString("en-US", {
+      style: "currency",
+      currency: "USD"
+    });
     }
 
     const inputIds = [
@@ -389,17 +437,62 @@
       });
     });
 
+
+
     async function exportPDF() {
-      const { jsPDF } = window.jspdf;
-      const content = document.getElementById("invoiceContent");
-      const canvas = await html2canvas(content, { scale: 2, useCORS: true });
-      const imgData = canvas.toDataURL("image/png");
-      const pdf = new jsPDF("p", "mm", "a4");
-      const imgWidth = 210;
-      const imgHeight = canvas.height * imgWidth / canvas.width;
-      pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
-      pdf.save("commercial_invoice.pdf");
-    }
+        const { jsPDF } = window.jspdf;
+        const content = document.getElementById("invoiceContent");
+
+        const pdf = new jsPDF("p", "mm", "a4");
+        const pageWidth = 210;
+        const pageHeight = 297;
+        const margin = 5; 
+
+        const canvas = await html2canvas(content, {
+          scale: 2,
+          useCORS: true
+        });
+
+        const imgFullWidth = canvas.width;
+        const imgFullHeight = canvas.height;
+
+        const imgPDFWidth = pageWidth - margin * 2;
+        const imgPDFHeight = imgPDFWidth * (imgFullHeight / imgFullWidth);
+
+        const pageHeightPx = Math.floor((canvas.width * (pageHeight - margin * 2)) / imgPDFWidth);
+
+        const ctx = canvas.getContext("2d");
+        const totalPages = Math.ceil(imgFullHeight / pageHeightPx);
+
+        for (let i = 0; i < totalPages; i++) {
+          const pageCanvas = document.createElement("canvas");
+          const pageContext = pageCanvas.getContext("2d");
+
+          const overlap = 20; // px de sobreposição entre páginas
+          const sourceY = i * pageHeightPx - (i > 0 ? overlap : 0);
+          const sliceHeight = (i === totalPages - 1)
+            ? imgFullHeight - sourceY
+            : pageHeightPx + (i > 0 ? overlap : 0);
+
+          pageCanvas.width = imgFullWidth;
+          pageCanvas.height = sliceHeight;
+
+          pageContext.drawImage(
+            canvas,
+            0, sourceY,
+            imgFullWidth, sliceHeight,
+            0, 0,
+            imgFullWidth, sliceHeight
+          );
+
+              const imgData = pageCanvas.toDataURL("image/png");
+                  if (i > 0) pdf.addPage();
+                pdf.addImage(imgData, "PNG", margin, margin, imgPDFWidth, (sliceHeight * imgPDFWidth) / imgFullWidth);
+        }
+
+            pdf.save("commercial_invoice.pdf");
+      }
+
 
     function atualizarLogo() {
       const selected = document.getElementById("companySelect").value;
