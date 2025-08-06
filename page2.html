@@ -27,7 +27,7 @@
 
     h1 {
       text-align: center;
-      margin-bottom: 20px;
+      margin-bottom: 10px;
       font-size: 18px;
     }
 
@@ -53,7 +53,7 @@
     th:nth-child(6), td:nth-child(6) { width: 10%; }
     th:nth-child(7), td:nth-child(7) { width: 15%; }
 
-    .section { margin-top: 20px; }
+    .section { margin-top: 5px; }
     .flex { display: flex; justify-content: space-between; flex-wrap: wrap; }
 
     .signature {
@@ -66,6 +66,7 @@
       grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
       gap: 10px;
       margin-bottom: 20px;
+      margin-top: 5px;
     }
 
     label {
@@ -134,6 +135,7 @@
     <label>Shipment Ref.:<input id="inputRefEnvio"></label>
     <label>Recipient Ref.:<input id="inputRefDestinatario"></label>
     <label>Remarks:<textarea id="inputObservacoes" rows="2"></textarea></label>
+    <label><strong>Product Origin: Brazil</strong></label>
   </div>
 
   <p><strong>Add Item</strong></p>
@@ -148,6 +150,17 @@
       <button class="add-button" onclick="addItem()">Add Item</button>
       <button class="remove-button" onclick="removeLastItem()">Remove Last Item</button>
     </div>
+  </div> 
+
+  <div class="input-area" style="max-width: 300px; margin: 0 auto;">
+    <label>
+      Shipping:
+      <input id="shippingValue" type="number" step="0.01" value="0.00" style="text-align: right;">
+    </label>
+    <label>
+      Other Costs:
+      <input id="otherCostsValue" type="number" step="0.01" value="0.00" style="text-align: right;">
+    </label>
   </div>
 
   <div class="input-area">
@@ -163,14 +176,14 @@
   <!-- INVOICE A4 INTEIRA COM LOGO, TABELA E INSTRUÇÕES BANCÁRIAS -->
   <div id="invoiceContent">
 
-    <div style="text-align: center; margin-bottom: 20px;">
+    <div style="text-align: center; margin-bottom: 10px;">
       <img id="companyLogoPdf" src="images/BID_IMPORT_logo_enhanced.png" alt="Company Logo" style="max-width: 150px;">
       <h1>Commercial Invoice</h1>
     </div>
 
     <!-- Bloco de instruções bancárias no topo -->
-    <div style="border: 1px solid #800000; padding: 10px; margin-bottom: 20px; font-size: 11px;">
-      <h3 style="text-align: center; background-color: #800000; color: white; margin: 0 0 10px 0; padding: 4px; font-size: 12px;">
+    <div style="border: 1px solid #800000; padding: 10px; margin-bottom: 10px; font-size: 11px;">
+      <h3 style="text-align: center; background-color: #800000; color: white; margin: 0 0 5px 0; padding: 4px; font-size: 12px;">
         BANK REFERENCES / WIRE INSTRUCTIONS - USD CITI
       </h3>
       <div style="display: flex; flex-wrap: wrap; justify-content: space-between; line-height: 1.6;">
@@ -215,6 +228,7 @@
       <strong>Shipment Ref.:</strong> <span id="refEnvio"></span><br>
       <strong>Recipient Ref.:</strong> <span id="refDestinatario"></span><br>
       <strong>Remarks:</strong> <span id="observacoes"></span>
+      <br><strong>Product Origin: Brazil</strong> <span id="Origin"></span>
     </div>
 
     <table id="tabelaItens">
@@ -239,12 +253,12 @@
       </div>
       <div style="display: flex; justify-content: space-between; margin-top: 5px;">
         <strong>Shipping:</strong>
-        <input id="shippingValue" type="number" style="width: 100px; text-align: right;" value="0.00">
+        <span id="shippingDisplay">$0.00</span>
       </div>
-      <div style="display: flex; justify-content: space-between; margin-top: 5px;">
+       <div style="display: flex; justify-content: space-between; margin-top: 5px;">
         <strong>Other Costs (Handling):</strong>
-        <input id="otherCostsValue" type="number" style="width: 100px; text-align: right;" value="0.00">
-      </div>
+        <span id="otherCostsDisplay">$0.00</span>
+    </div>
       <div style="display: flex; justify-content: space-between; margin-top: 8px; border-top: 1px solid #ccc; padding-top: 5px;">
         <strong>GRAND TOTAL:</strong>
         <span id="grandTotal">$0.00</span>
@@ -287,24 +301,7 @@
 
 
 
-    <div class="section">
-      <em>This is to confirm that the information on this invoice is true and correct and that the contents of this shipment are as stated above.</em>
-    </div>
 
-    <div class="footer-fixed">
-      <div class="signature">
-        <div>
-          <p><strong>Name:</strong> __________________</p>
-          <p><strong>Position:</strong></p>
-        </div>
-        <div>
-          <p><strong>Signature:</strong> __________________</p>
-          <p><strong>Company Stamp</strong></p>
-        </div>
-      </div>
-      <p style="text-align:right;">Page 1 of 1</p>
-    </div>
-  </div>
 
       <script>
     // Atualizar campos dinâmicos
@@ -381,9 +378,17 @@
       currency: "USD"
     });
 
-    // Lê os valores de Shipping e Other Costs digitados
     const shipping = parseFloat(document.getElementById("shippingValue").value) || 0;
-    const other = parseFloat(document.getElementById("otherCostsValue").value) || 0;
+const other = parseFloat(document.getElementById("otherCostsValue").value) || 0;
+
+document.getElementById("shippingDisplay").textContent = shipping.toLocaleString("en-US", {
+  style: "currency",
+  currency: "USD"
+});
+document.getElementById("otherCostsDisplay").textContent = other.toLocaleString("en-US", {
+  style: "currency",
+  currency: "USD"
+});
 
     // Soma tudo para calcular o valor total final
     const grandTotal = valorTotalFatura + shipping + other;
@@ -421,7 +426,7 @@
       document.getElementById("inputNumeroFatura").value = invoiceNumber;
       document.getElementById("numeroFatura").textContent = invoiceNumber;
 
-      const remetentePadrao = `BID IMPORT COMERCIAL ATACADISTA LTDA\nAv. Cristovão Colombo, Nº 2.620 - Sala 01\nVila industrial - Piracicaba/SP CEP: 13412-227\nCNPJ: 13.131.844/0001-13 - IE: 535.253.043.110\nTel: +55 19 99157-8587`;
+      const remetentePadrao = `NR SHOP COMERCIAL LDTA\nRua Eduardo Fernandes Filho, N° 101 - Sala 01\nBairro Guamium - Piracicaba/SP CEP: 13413-036\nCNPJ: 39.475.936/0001-04 - IE: 535.825.640.112\nTel: +55 19 2532-0020`;
 
       const inputRemetente = document.getElementById("inputRemetente");
       inputRemetente.value = remetentePadrao;
@@ -436,6 +441,10 @@
         document.getElementById("total").value = totalCalc.toFixed(2);
       });
     });
+
+    ["shippingValue", "otherCostsValue"].forEach(id => {
+    document.getElementById(id).addEventListener("input", atualizarTotais);
+  });
 
 
 
