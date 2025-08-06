@@ -23,6 +23,7 @@
       background: white;
       box-shadow: 0 0 30px rgba(0,0,0,0.1);
       position: relative;
+      
     }
 
     h1 {
@@ -40,7 +41,7 @@
 
     th, td {
       border: 1px solid black;
-      padding: 5px;
+      padding: 1.5px;
       text-align: left;
       word-wrap: break-word;
     }
@@ -109,6 +110,7 @@
     h5 {
       margin: 2px 0;
       font-weight: normal;
+      
     }
   </style>
 </head>
@@ -182,12 +184,12 @@
     </div>
 
     <!-- Bloco de instruções bancárias no topo -->
-    <div style="border: 1px solid #800000; padding: 10px; margin-bottom: 10px; font-size: 11px;">
+    <div style="border: 1px solid #800000; padding: 3px; margin-bottom: 10px; font-size: 10px;">
       <h3 style="text-align: center; background-color: #800000; color: white; margin: 0 0 5px 0; padding: 4px; font-size: 12px;">
         BANK REFERENCES / WIRE INSTRUCTIONS - USD CITI
       </h3>
       <div style="display: flex; flex-wrap: wrap; justify-content: space-between; line-height: 1.6;">
-        <div style="flex: 1 1 48%; padding-right: 10px; box-sizing: border-box;">
+        <div style="flex: 1 1 48%; padding-right: 5px; box-sizing: border-box;">
           <strong>Beneficiary Name:</strong> NR SHOP COMERCIAL LTDA<br>
           <strong>Beneficiary Address:</strong> RUA EDUARDO FERNANDES FILHO<br>
           <strong>IBAN:</strong> BR046214417500001009000072C1<br>
@@ -215,7 +217,7 @@
 
     <div class="section flex">
       <div>
-        <strong>Sent From:</strong><br>
+        <strong>Exporter:</strong><br>
         <span id="remetente"></span>
       </div>
       <div>
@@ -224,16 +226,10 @@
       </div>
     </div>
 
-    <div class="section">
-      <strong>Shipment Ref.:</strong> <span id="refEnvio"></span><br>
-      <strong>Recipient Ref.:</strong> <span id="refDestinatario"></span><br>
-      <strong>Remarks:</strong> <span id="observacoes"></span>
-      <br><strong>Product Origin: Brazil</strong> <span id="Origin"></span>
-    </div>
-
     <table id="tabelaItens">
       <thead>
         <tr>
+          <h4><strong>Product Origin: Brazil</strong></h5>
           <th>Item</th>
           <th>Description</th>
           <th>Net Weight (kg)</th>
@@ -260,7 +256,7 @@
         <span id="otherCostsDisplay">$0.00</span>
     </div>
       <div style="display: flex; justify-content: space-between; margin-top: 8px; border-top: 1px solid #ccc; padding-top: 5px;">
-        <strong>GRAND TOTAL:</strong>
+        <strong>TOTAL:</strong>
         <span id="grandTotal">$0.00</span>
       </div>
     </div>
@@ -404,10 +400,7 @@ document.getElementById("otherCostsDisplay").textContent = other.toLocaleString(
       "inputData", "inputNumeroFatura", "inputRemetente",
       "inputDestinatario", "inputRefEnvio", "inputRefDestinatario", "inputObservacoes"
     ];
-    const spanIds = [
-      "data", "numeroFatura", "remetente",
-      "destinatario", "refEnvio", "refDestinatario", "observacoes"
-    ];
+
 
     inputIds.forEach((id, i) => {
       document.getElementById(id).addEventListener("input", () => {
@@ -416,10 +409,7 @@ document.getElementById("otherCostsDisplay").textContent = other.toLocaleString(
       });
     });
 
-    window.addEventListener("DOMContentLoaded", () => {
-      const today = new Date().toISOString().split("T")[0];
-      document.getElementById("inputData").value = today;
-      document.getElementById("data").textContent = today;
+
 
       const now = new Date();
       const invoiceNumber = `INV-${now.getFullYear()}${(now.getMonth()+1).toString().padStart(2,'0')}${now.getDate().toString().padStart(2,'0')}-${now.getHours().toString().padStart(2,'0')}${now.getMinutes().toString().padStart(2,'0')}${now.getSeconds().toString().padStart(2,'0')}`;

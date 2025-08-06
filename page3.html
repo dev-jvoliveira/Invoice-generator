@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Commercial Invoice</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      font-size: 12px;
+      background-color: #f5f5f5;
+    }
+    .invoice-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .invoice {
+      width: 794px;
+      background: white;
+      padding: 20px;
+      border: 1px solid #000;
+      margin-bottom: 20px;
+    }
+    h1 {
+      text-align: center;
+      margin: 0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td {
+      border: 1px solid #000;
+      padding: 4px;
+      text-align: left;
+      vertical-align: top;
+    }
+    .no-border td {
+      border: none;
+    }
+    .section-title {
+      font-weight: bold;
+      margin-top: 10px;
+    }
+    .text-center {
+      text-align: center;
+    }
+    #downloadBtn {
+      padding: 10px 20px;
+      font-size: 14px;
+      margin-bottom: 20px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="invoice-container">
+    <button id="downloadBtn">Download PDF</button>
+    <div id="invoiceContent" class="invoice">
+      <!-- INVOICE CONTENT BEGIN -->
+      <h1>Commercial Invoice<br>Fatura Comercial</h1>
+      <p class="text-center">Page 1 of 2</p>
+      <table class="no-border">
+        <tr>
+          <td><strong>Exporter (Exportador):</strong><br>NR Shop Comercial<br>Av. Cristovao Colombo, 2620<br>Piracicaba-SP 13412<br>BRAZIL<br>Tax ID: 37479303000104<br>Tel: 19992515097</td>
+          <td><strong>Consignee (Consignatário):</strong><br>Harpex LLC - Amazon PB03<br>7900 LFC Parkway<br>Tax ID: 32-6773616<br>Tel: 13239214021<br>contact@harpexpellets.com<br>Palm Beach Gardens FL 33410<br>USA</td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <strong>Shipment Details:</strong><br>
+            Ship Date: 01 Aug, 2025<br>
+            Waybill / Tracking: AMZ0020281004<br>
+            Purpose: SOLD<br>
+            Payment Terms: Bill of Lading<br>
+            Port of Loading: SANTOS (BR)<br>
+            Port of Unloading: UNITED STATES OF AMERICA
+          </td>
+        </tr>
+      </table>
+      <div class="section-title">Itemized Goods:</div>
+      <table>
+        <thead>
+          <tr>
+            <th>No.</th>
+            <th>Package Units</th>
+            <th>Net Weight (KG)</th>
+            <th>Unit</th>
+            <th>Description</th>
+            <th>HTS Code</th>
+            <th>Origin</th>
+            <th>Unit Value (USD)</th>
+            <th>Total Value (USD)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td>60</td><td>17.40</td><td>PCS</td><td>Aquiles pellets 200ct</td><td></td><td>BR</td><td>0.750000</td><td>45.00</td></tr>
+          <tr><td>2</td><td>60</td><td>15.00</td><td>PCS</td><td>Quantum pellets 180ct</td><td></td><td>BR</td><td>0.750000</td><td>45.00</td></tr>
+          <tr><td>3</td><td>60</td><td>15.90</td><td>PCS</td><td>Athenas pellets 200ct</td><td></td><td>BR</td><td>0.750000</td><td>45.00</td></tr>
+          <tr><td>4</td><td>60</td><td>21.60</td><td>PCS</td><td>Diabolo pellets 160ct</td><td></td><td>BR</td><td>0.750000</td><td>45.00</td></tr>
+          <tr><td>5</td><td>570</td><td>22.50</td><td>PCS</td><td>Slug pellets 140ct</td><td></td><td>BR</td><td>0.750000</td><td>427.50</td></tr>
+          <tr><td>6</td><td>60</td><td>19.50</td><td>PCS</td><td>Zes pellets 180ct</td><td></td><td>BR</td><td>0.750000</td><td>45.00</td></tr>
+          <tr><td>7</td><td>60</td><td>19.60</td><td>PCS</td><td>Pro Hunter pellets 180ct</td><td></td><td>BR</td><td>0.750000</td><td>45.00</td></tr>
+          <tr><td>8</td><td>60</td><td>21.70</td><td>PCS</td><td>Sirius pellets 400ct</td><td></td><td>BR</td><td>0.750000</td><td>45.00</td></tr>
+          <tr><td>9</td><td>60</td><td>15.00</td><td>PCS</td><td>Orion pellets 100ct</td><td></td><td>BR</td><td>0.500000</td><td>30.00</td></tr>
+          <tr><td>10</td><td>144</td><td>40.10</td><td>PCS</td><td>Diabolo series pellets 200ct</td><td></td><td>BR</td><td>0.750000</td><td>108.00</td></tr>
+          <tr><td>11</td><td>12</td><td>7.30</td><td>LBS</td><td>Samples, test products</td><td></td><td>BR</td><td>0.000000</td><td>0.00</td></tr>
+        </tbody>
+      </table>
+      <p class="section-title">Totals</p>
+      <table>
+        <tr><td>Subtotal:</td><td>923.85</td></tr>
+        <tr><td>Shipping:</td><td>0.00</td></tr>
+        <tr><td>Insurance:</td><td>0.00</td></tr>
+        <tr><td>Other (Banking Fee):</td><td>13.00</td></tr>
+        <tr><td><strong>Invoice Total:</strong></td><td><strong>936.85</strong></td></tr>
+        <tr><td>Currency:</td><td>USD</td></tr>
+      </table>
+      <p>Date: 01 Aug, 2025</p>
+      <p>Signature/Carimbo: ____________________</p>
+      <p>NR SHOP</p>
+      <p>+55 19 2532-0400</p>
+      <!-- INVOICE CONTENT END -->
+    </div>
+  </div>
+  <script>
+    document.getElementById('downloadBtn').addEventListener('click', function () {
+      const invoice = document.getElementById('invoiceContent');
+      html2canvas(invoice, { scale: 2 }).then(canvas => {
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jspdf.jsPDF('p', 'pt', 'a4');
+        const imgProps = pdf.getImageProperties(imgData);
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+        pdf.save('invoice.pdf');
+      });
+    });
+  </script>
+</body>
+</html>
