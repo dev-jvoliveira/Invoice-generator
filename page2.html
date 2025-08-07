@@ -965,13 +965,8 @@
     <script>
       function salvarFatura() {
         const campos = [
-          "inputData",
-          "inputNumeroFatura",
           "inputRemetente",
           "inputDestinatario",
-          "inputRefEnvio",
-          "inputRefDestinatario",
-          "inputObservacoes",
           "inputShipDate",
           "inputTracking",
           "inputInvoiceNo",
@@ -983,18 +978,20 @@
           "inputCompanyName",
           "inputCompanyAddress",
           "inputCountry",
+          "inputSoldTaxId",
+          "inputSoldCompanyName",
+          "inputSoldCompanyAddress",
+          "inputSoldCountry",
           "shippingValue",
           "otherCostsValue",
-          "inputMoeda",
-          "inputIncoterms",
-          "inputRazaoExportacao",
-          "inputTipoExportacao",
-          "inputTransportador",
         ];
 
         const dados = {};
         campos.forEach((id) => {
-          dados[id] = document.getElementById(id).value;
+          const elemento = document.getElementById(id);
+          if (elemento) {
+            dados[id] = elemento.value;
+          }
         });
 
         // Itens da fatura
