@@ -13,7 +13,7 @@
     <style>
       body {
         font-family: Arial, sans-serif;
-        padding: 150px; /* Aumenta espaço interno */
+        padding: 20px;
         font-size: 12px;
         background: #e6e6e6;
         margin: 0;
@@ -117,6 +117,12 @@
         font-weight: bold;
       }
 
+      input,
+      textarea {
+        padding: 4px;
+        font-size: 12px;
+      }
+
       .add-button,
       .remove-button {
         padding: 6px 10px;
@@ -178,21 +184,6 @@
         color: white;
         border: 1 solid #000;
         padding: 5px;
-      }
-
-      input,
-      textarea,
-      select {
-        padding: 6px 8px;
-        font-size: 12px;
-        font-family: Arial, sans-serif;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        width: 100%;
-        max-width: 420px; /* <- evita esticar demais */
-        box-sizing: border-box;
-        background-color: #fff;
-        transition: border 0.2s ease-in-out;
       }
     </style>
   </head>
