@@ -742,24 +742,38 @@
 
         const subtotalValue =
           parseFloat(document.getElementById("total").value) || 0;
-        const subtotalFormatted = new Intl.NumberFormat("en-US", {
+        const moedaSelecionada =
+          document.getElementById("inputMoeda").value || "USD";
+
+        // Mapeia locais por moeda para formatação correta
+        const localePorMoeda = {
+          USD: "en-US",
+          EUR: "de-DE",
+          BRL: "pt-BR",
+          GBP: "en-GB",
+          JPY: "ja-JP",
+        };
+        const locale = localePorMoeda[moedaSelecionada] || "en-US";
+
+        const subtotalFormatted = new Intl.NumberFormat(locale, {
           style: "currency",
-          currency: "USD",
+          currency: moedaSelecionada,
         }).format(subtotalValue);
 
         const tr = document.createElement("tr");
         tr.innerHTML = `
-        <td>${itemCount}</td>
-        <td>${desc.value}</td>
-        <td>${qty.value}</td>
-        <td>${unitMeasure.value}</td>
-        <td>${code.value}</td>
-        <td>${weight.value}</td>
-        <td>${countryMfr.value}</td>
-        <td>${unit.value}</td>
-        <td>${subtotalFormatted}</td>
-      `;
+          <td>${itemCount}</td>
+          <td>${desc.value}</td>
+          <td>${qty.value}</td>
+          <td>${unitMeasure.value}</td>
+          <td>${code.value}</td>
+          <td>${weight.value}</td>
+          <td>${countryMfr.value}</td>
+          <td>${unit.value}</td>
+          <td>${subtotalFormatted}</td>
+        `;
         tbody.appendChild(tr);
+
         atualizarTotais();
       }
 
@@ -779,7 +793,9 @@
         [...tbody.children].forEach((tr) => {
           pesoLiquidoTotal += parseFloat(tr.children[4].textContent) || 0;
           pesoBrutoTotal += parseFloat(tr.children[5].textContent) || 0;
-          const subtotal = tr.children[8].textContent.replace(/[^0-9.-]+/g, "");
+          const subtotal = tr.children[8].textContent
+            .replace(/[^\d,.-]+/g, "") // remove símbolo da moeda
+            .replace(",", "."); // troca vírgula por ponto
           valorTotalFatura += parseFloat(subtotal) || 0;
         });
 
