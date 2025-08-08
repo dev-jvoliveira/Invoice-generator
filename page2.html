@@ -335,6 +335,10 @@
         Additional Notes:
         <input id="inputSoldNotes" />
       </label>
+      <label>
+        Representative Name:
+        <input id="inputRepresentative" />
+      </label>
     </div>
 
     <!-- Botão para copiar os dados do Consignee -->
@@ -580,7 +584,7 @@
             completed on behalf of a company or individual.
             <br />
             <hr />
-            <strong>NR Shop Comercial</strong>
+            <strong><span id="representativeNamePdf"></span></strong>
           </div>
         </div>
 
@@ -960,6 +964,14 @@
               document.getElementById(input).value;
           });
         });
+
+        document
+          .getElementById("inputRepresentative")
+          .addEventListener("input", () => {
+            document.getElementById("representativeNamePdf").textContent =
+              document.getElementById("inputRepresentative").value;
+          });
+        //FINAL LOADED
       });
 
       document.getElementById("inputMoeda").addEventListener("input", () => {
