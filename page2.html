@@ -13,7 +13,7 @@
     <style>
       body {
         font-family: Arial, sans-serif;
-        padding: 20px;
+        padding: 150px; /* Aumenta espaço interno */
         font-size: 12px;
         background: #e6e6e6;
         margin: 0;
@@ -189,17 +189,10 @@
         border: 1px solid #ccc;
         border-radius: 4px;
         width: 100%;
+        max-width: 420px; /* <- evita esticar demais */
         box-sizing: border-box;
         background-color: #fff;
         transition: border 0.2s ease-in-out;
-      }
-
-      input:focus,
-      textarea:focus,
-      select:focus {
-        border-color: #0051ff;
-        outline: none;
-        background-color: #f0f8ff;
       }
     </style>
   </head>
