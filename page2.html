@@ -790,13 +790,35 @@
         let pesoBrutoTotal = 0;
         let valorTotalFatura = 0;
 
+        const moedaSelecionada =
+          document.getElementById("inputMoeda").value || "USD";
+
+        const localePorMoeda = {
+          USD: "en-US",
+          EUR: "de-DE",
+          BRL: "pt-BR",
+          GBP: "en-GB",
+          JPY: "ja-JP",
+        };
+        const locale = localePorMoeda[moedaSelecionada] || "en-US";
+
         [...tbody.children].forEach((tr) => {
           pesoLiquidoTotal += parseFloat(tr.children[4].textContent) || 0;
           pesoBrutoTotal += parseFloat(tr.children[5].textContent) || 0;
-          const subtotal = tr.children[8].textContent
-            .replace(/[^\d,.-]+/g, "") // remove símbolo da moeda
-            .replace(",", "."); // troca vírgula por ponto
-          valorTotalFatura += parseFloat(subtotal) || 0;
+
+          let subtotalStr = tr.children[8].textContent;
+
+          // Remove todos os símbolos não numéricos e espaços
+          subtotalStr = subtotalStr.replace(/[^\d.,-]/g, "");
+
+          // Corrige pontuação de acordo com locale
+          if (locale === "de-DE" || locale === "pt-BR") {
+            subtotalStr = subtotalStr.replace(/\./g, "").replace(",", ".");
+          } else {
+            subtotalStr = subtotalStr.replace(/,/g, "");
+          }
+
+          valorTotalFatura += parseFloat(subtotalStr) || 0;
         });
 
         document.getElementById("pesoLiquidoTotal").textContent =
@@ -804,12 +826,11 @@
         document.getElementById("pesoBrutoTotal").textContent =
           pesoBrutoTotal.toFixed(2) + " kg";
 
-        const moeda = document.getElementById("inputMoeda").value || "USD";
-        document.getElementById("moeda").textContent = moeda;
+        document.getElementById("moeda").textContent = moedaSelecionada;
 
-        const formatador = new Intl.NumberFormat("en-US", {
+        const formatador = new Intl.NumberFormat(locale, {
           style: "currency",
-          currency: moeda,
+          currency: moedaSelecionada,
         });
 
         const shipping =
