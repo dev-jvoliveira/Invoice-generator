@@ -211,7 +211,23 @@
 
     <!-- Área de preenchimento -->
     <div class="input-area">
-      <label>Exporter:<textarea id="inputRemetente" rows="2"></textarea></label>
+      <div style="display: flex; gap: 10px; align-items: flex-end">
+        <label style="flex: 1">
+          Exporter:
+          <textarea id="inputRemetente" rows="2"></textarea>
+        </label>
+
+        <label style="min-width: 120px">
+          Currency:
+          <select id="inputMoeda">
+            <option value="USD" selected>USD</option>
+            <option value="EUR">EUR</option>
+            <option value="BRL">BRL</option>
+            <option value="GBP">GBP</option>
+            <option value="JPY">JPY</option>
+          </select>
+        </label>
+      </div>
       <label
         >Recipient:<textarea id="inputDestinatario" rows="2"></textarea>
       </label>
@@ -311,6 +327,14 @@
         >Ctry/Terr:
         <input id="inputSoldCountry" />
       </label>
+      <label>
+        Custom Information:
+        <input id="inputSoldCustomInfo" />
+      </label>
+      <label>
+        Additional Notes:
+        <input id="inputSoldNotes" />
+      </label>
     </div>
 
     <!-- Botão para copiar os dados do Consignee -->
@@ -355,7 +379,19 @@
       </label>
     </div>
     <br />
-
+    <hr />
+    <p><strong>Bank Details</strong></p>
+    <div class="input-area">
+      <label>Beneficiary Name:<input id="inputBeneficiaryName" /></label>
+      <label>IBAN:<input id="inputIban" /></label>
+      <label>Bank Name:<input id="inputBankName" /></label>
+      <label>SWIFT Code:<input id="inputSwiftCode" /></label>
+      <label>Account Number:<input id="inputAccountNumber" /></label>
+      <label>Intermediary Bank:<input id="inputIntermediary" /></label>
+      <label
+        >SWIFT Code (Intermediary):<input id="inputIntermediarySwift"
+      /></label>
+    </div>
     <hr />
     <br />
 
@@ -486,6 +522,14 @@
           <div>
             <strong>Ctry/Terr:</strong> <span id="soldCountryPdf"></span>
           </div>
+          <div style="margin-top: 4px">
+            <strong>Custom Information:</strong>
+            <span id="soldCustomInfoPdf"></span>
+          </div>
+          <div style="margin-top: 4px">
+            <strong>Additional Notes:</strong>
+            <span id="soldNotesPdf"></span>
+          </div>
         </div>
       </div>
 
@@ -551,6 +595,11 @@
           "
         >
           <div style="display: flex; justify-content: space-between">
+            <strong>Currency:</strong>
+            <span id="moeda">USD</span>
+          </div>
+
+          <div style="display: flex; justify-content: space-between">
             <strong>SUB TOTAL:</strong>
             <span id="subtotalFinal">$0.00</span>
           </div>
@@ -611,7 +660,7 @@
 
       <hr />
 
-      <!-- Bloco de instruções bancárias no topo -->
+      <!-- BLOCO BANCÁRIO DINÂMICO -->
       <div
         style="
           border: 1px solid #800000;
@@ -632,6 +681,7 @@
         >
           BANK REFERENCES / WIRE INSTRUCTIONS - USD CITI
         </h3>
+
         <div
           style="
             display: flex;
@@ -643,21 +693,21 @@
           <div
             style="flex: 1 1 48%; padding-right: 10px; box-sizing: border-box"
           >
-            <strong>Beneficiary Name:</strong> NR SHOP COMERCIAL LTDA<br />
-            <strong>Beneficiary Address:</strong> RUA EDUARDO FERNANDES FILHO<br />
-            <strong>IBAN:</strong> BR046214417500001009000072C1<br />
-            <strong>Bank Name:</strong> BANCO PINE<br />
-            <strong>SWIFT CODE:</strong> PBBRBRSPXXX<br />
+            <strong>Beneficiary Name:</strong>
+            <span id="beneficiaryNamePdf"></span><br />
+            <strong>IBAN:</strong> <span id="ibanPdf"></span><br />
+            <strong>Bank Name:</strong> <span id="bankNamePdf"></span><br />
+            <strong>SWIFT CODE:</strong> <span id="swiftCodePdf"></span><br />
           </div>
           <div
             style="flex: 1 1 48%; padding-left: 10px; box-sizing: border-box"
           >
-            <strong>Bank Address:</strong> AV. Pres. Juscelino Kubitscheck, 1830
-            – 6º Andar<br />
-            <strong>Account Number:</strong> 36887811<br />
-            <strong>Intermediary Bank (if any):</strong> Citibank N.A.<br />
-            <strong>SWIFT CODE:</strong> CITIUS33<br />
-            <strong>ABA/ SWIFT Number:</strong> 021000089
+            <strong>Account Number:</strong> <span id="accountNumberPdf"></span
+            ><br />
+            <strong>Intermediary Bank (if any):</strong>
+            <span id="intermediaryPdf"></span><br />
+            <strong>SWIFT CODE:</strong> <span id="intermediarySwiftPdf"></span
+            ><br />
           </div>
         </div>
       </div>
@@ -737,39 +787,29 @@
           pesoLiquidoTotal.toFixed(2) + " kg";
         document.getElementById("pesoBrutoTotal").textContent =
           pesoBrutoTotal.toFixed(2) + " kg";
-        //document.getElementById("totalItens").textContent = itemCount;
 
-        // Garante que elementos A4 existem antes de atualizar
-        if (!document.getElementById("shippingDisplay")) return;
+        const moeda = document.getElementById("inputMoeda").value || "USD";
+        document.getElementById("moeda").textContent = moeda;
 
-        document.getElementById("subtotalFinal").textContent =
-          valorTotalFatura.toLocaleString("en-US", {
-            style: "currency",
-            currency: "USD",
-          });
+        const formatador = new Intl.NumberFormat("en-US", {
+          style: "currency",
+          currency: moeda,
+        });
 
         const shipping =
           parseFloat(document.getElementById("shippingValue").value) || 0;
         const other =
           parseFloat(document.getElementById("otherCostsValue").value) || 0;
-
-        document.getElementById("shippingDisplay").textContent =
-          shipping.toLocaleString("en-US", {
-            style: "currency",
-            currency: "USD",
-          });
-        document.getElementById("otherCostsDisplay").textContent =
-          other.toLocaleString("en-US", {
-            style: "currency",
-            currency: "USD",
-          });
-
         const grandTotal = valorTotalFatura + shipping + other;
+
+        document.getElementById("subtotalFinal").textContent =
+          formatador.format(valorTotalFatura);
+        document.getElementById("shippingDisplay").textContent =
+          formatador.format(shipping);
+        document.getElementById("otherCostsDisplay").textContent =
+          formatador.format(other);
         document.getElementById("grandTotal").textContent =
-          grandTotal.toLocaleString("en-US", {
-            style: "currency",
-            currency: "USD",
-          });
+          formatador.format(grandTotal);
       }
 
       const inputIds = [
@@ -826,6 +866,8 @@
           { input: "inputSoldCompanyName", span: "soldCompanyNamePdf" },
           { input: "inputSoldCompanyAddress", span: "soldCompanyAddressPdf" },
           { input: "inputSoldCountry", span: "soldCountryPdf" },
+          { input: "inputSoldCustomInfo", span: "soldCustomInfoPdf" },
+          { input: "inputSoldNotes", span: "soldNotesPdf" },
         ];
         soldToCampos.forEach(({ input, span }) => {
           document.getElementById(input).addEventListener("input", () => {
@@ -864,6 +906,28 @@
               document.getElementById(input).value;
           });
         });
+
+        const camposBanco = [
+          { input: "inputBeneficiaryName", span: "beneficiaryNamePdf" },
+          { input: "inputIban", span: "ibanPdf" },
+          { input: "inputBankName", span: "bankNamePdf" },
+          { input: "inputSwiftCode", span: "swiftCodePdf" },
+          { input: "inputAccountNumber", span: "accountNumberPdf" },
+          { input: "inputIntermediary", span: "intermediaryPdf" },
+          { input: "inputIntermediarySwift", span: "intermediarySwiftPdf" },
+        ];
+
+        camposBanco.forEach(({ input, span }) => {
+          document.getElementById(input).addEventListener("input", () => {
+            document.getElementById(span).textContent =
+              document.getElementById(input).value;
+          });
+        });
+      });
+
+      document.getElementById("inputMoeda").addEventListener("input", () => {
+        document.getElementById("moeda").textContent =
+          document.getElementById("inputMoeda").value;
       });
 
       // Cálculo automático do total por item (qty × unit)
@@ -984,6 +1048,15 @@
           "inputSoldCountry",
           "shippingValue",
           "otherCostsValue",
+
+          // Campos bancários adicionados
+          "inputBeneficiaryName",
+          "inputIban",
+          "inputBankName",
+          "inputSwiftCode",
+          "inputAccountNumber",
+          "inputIntermediary",
+          "inputIntermediarySwift",
         ];
 
         const dados = {};
