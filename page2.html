@@ -886,25 +886,51 @@
 
       function formatDateForPdf(inputVal) {
         if (!inputVal) return "";
-        let d;
 
-        // Aceita "dd/mm/yyyy" ou "yyyy-mm-dd"
-        if (inputVal.includes("/")) {
-          const [dd, mm, yyyy] = inputVal.split("/");
-          d = new Date(`${yyyy}-${mm}-${dd}T00:00:00`);
+        // Normaliza separadores: espaço, ponto e hífen viram "/"
+        const norm = inputVal.trim().replace(/[.\s-]+/g, "/");
+
+        let dd, mm, yyyy;
+
+        // yyyy/mm/dd
+        if (/^\d{4}\/\d{1,2}\/\d{1,2}$/.test(norm)) {
+          const [y, m, d] = norm.split("/").map((n) => parseInt(n, 10));
+          yyyy = y;
+          mm = m;
+          dd = d;
+          // dd/mm/yyyy
+        } else if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(norm)) {
+          const [d, m, y] = norm.split("/").map((n) => parseInt(n, 10));
+          dd = d;
+          mm = m;
+          yyyy = y;
         } else {
-          d = new Date(inputVal);
+          // Formato inesperado: devolve o que entrou
+          return inputVal;
         }
 
-        if (isNaN(d)) return inputVal;
+        if (!(mm >= 1 && mm <= 12) || !(dd >= 1 && dd <= 31)) return inputVal;
 
-        const day = String(d.getDate()).padStart(2, "0");
-        const monthShort = d
-          .toLocaleString("pt-BR", { month: "short" })
-          .replace(".", "");
-        const year = d.getFullYear();
+        // Abreviações em inglês (com ponto; "May" fica sem ponto)
+        const months = [
+          "Jan.",
+          "Feb.",
+          "Mar.",
+          "Apr.",
+          "May",
+          "Jun.",
+          "Jul.",
+          "Aug.",
+          "Sep.",
+          "Oct.",
+          "Nov.",
+          "Dec.",
+        ];
 
-        return `${day} ${monthShort} ${year}`.toLowerCase();
+        const day = String(dd).padStart(2, "0");
+        const mon = months[mm - 1];
+
+        return `${day} ${mon} ${yyyy}`;
       }
 
       window.addEventListener("DOMContentLoaded", () => {
