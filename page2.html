@@ -742,6 +742,12 @@
       let itemCount = 0;
 
       function addItem() {
+        // Confirmação antes de adicionar
+        if (!confirm("Deseja realmente adicionar este item?")) {
+          return; // Sai da função se o usuário cancelar
+        }
+
+        // Lógica original de adicionar item
         itemCount++;
 
         const subtotalValue =
@@ -749,7 +755,6 @@
         const moedaSelecionada =
           document.getElementById("inputMoeda").value || "USD";
 
-        // Mapeia locais por moeda para formatação correta
         const localePorMoeda = {
           USD: "en-US",
           EUR: "de-DE",
@@ -779,6 +784,9 @@
         tbody.appendChild(tr);
 
         atualizarTotais();
+
+        // Mensagem de sucesso após adicionar
+        alert("Item adicionado com sucesso!");
       }
 
       function removeLastItem() {
@@ -876,6 +884,29 @@
         });
       });
 
+      function formatDateForPdf(inputVal) {
+        if (!inputVal) return "";
+        let d;
+
+        // Aceita "dd/mm/yyyy" ou "yyyy-mm-dd"
+        if (inputVal.includes("/")) {
+          const [dd, mm, yyyy] = inputVal.split("/");
+          d = new Date(`${yyyy}-${mm}-${dd}T00:00:00`);
+        } else {
+          d = new Date(inputVal);
+        }
+
+        if (isNaN(d)) return inputVal;
+
+        const day = String(d.getDate()).padStart(2, "0");
+        const monthShort = d
+          .toLocaleString("pt-BR", { month: "short" })
+          .replace(".", "");
+        const year = d.getFullYear();
+
+        return `${day} ${monthShort} ${year}`.toLowerCase();
+      }
+
       window.addEventListener("DOMContentLoaded", () => {
         // Preenche o remetente padrão
         const remetentePadrao = `NR SHOP COMERCIAL LDTA\nRua Eduardo Fernandes Filho, N° 101 - Sala 01\nBairro Guamium - Piracicaba/SP CEP: 13413-036\nCNPJ: 39.475.936/0001-04 - IE: 535.825.640.112\nTel: +55 19 2532-0020`;
@@ -935,7 +966,6 @@
         };
 
         const camposExtras = [
-          { input: "inputShipDate", span: "shipDatePdf" },
           { input: "inputTracking", span: "trackingPdf" },
           { input: "inputInvoiceNo", span: "invoiceNoPdf" },
           { input: "inputPurpose", span: "purposePdf" },
@@ -947,6 +977,15 @@
               document.getElementById(input).value;
           });
         });
+
+        // Substitui APENAS o tratamento de inputShipDate
+        document
+          .getElementById("inputShipDate")
+          .addEventListener("input", () => {
+            const val = document.getElementById("inputShipDate").value;
+            document.getElementById("shipDatePdf").textContent =
+              formatDateForPdf(val);
+          });
 
         const camposBanco = [
           { input: "inputBeneficiaryName", span: "beneficiaryNamePdf" },
@@ -971,6 +1010,7 @@
             document.getElementById("representativeNamePdf").textContent =
               document.getElementById("inputRepresentative").value;
           });
+
         //FINAL LOADED
       });
 
